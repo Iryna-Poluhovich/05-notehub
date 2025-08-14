@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import styles from "./App.module.css";
 import { fetchNotes, deleteNote, createNote } from "../../services/noteService";
@@ -26,12 +31,12 @@ export default function App() {
     placeholderData: keepPreviousData,
   });
 
-   const deleteMutation = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteNote(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notes"] }),
   });
 
-   const createMutation = useMutation({
+  const createMutation = useMutation({
     mutationFn: (note: { title: string; content: string; tag: Note["tag"] }) =>
       createNote(note),
     onSuccess: () => {
@@ -40,7 +45,7 @@ export default function App() {
     },
   });
 
-return (
+  return (
     <div className={styles.app}>
       <header className={styles.toolbar}>
         <SearchBox value={search} onChange={setSearch} />

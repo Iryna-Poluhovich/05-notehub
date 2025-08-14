@@ -3,7 +3,7 @@ import type { AxiosResponse } from "axios";
 import type { Note, PaginatedNotes } from "../types/note";
 
 // const API_BASE_URL = "https://notehub-public.goit.study/api";
-const API_KEY = "VITE_NOTEHUB_TOKEN"; 
+const API_KEY = "VITE_NOTEHUB_TOKEN";
 
 const api = axios.create({
   baseURL: "https://notehub-public.goit.study/api",
