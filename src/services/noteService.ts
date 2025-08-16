@@ -1,9 +1,16 @@
 import axios from "axios";
 import type { AxiosResponse } from "axios";
-import type { Note, PaginatedNotes } from "../types/note";
+import type { Note } from "../types/note";
 
-// const API_BASE_URL = "https://notehub-public.goit.study/api";
-const API_KEY = "VITE_NOTEHUB_TOKEN";
+export interface PaginatedNotes {
+  notes: Note[];
+  total: number;
+  page: number;
+  perPage: number;
+  totalPages: number;
+}
+
+const API_KEY = import.meta.env.VITE_NOTEHUB_TOKEN;
 
 const api = axios.create({
   baseURL: "https://notehub-public.goit.study/api",
@@ -13,7 +20,7 @@ const api = axios.create({
   },
 });
 
-// --- Отримати нотатки з бекенду (підтримка пагінації і пошуку) ---
+
 export async function fetchNotes(
   page: number,
   perPage: number,
@@ -28,7 +35,7 @@ export async function fetchNotes(
   return data;
 }
 
-// --- Створити нову нотатку ---
+
 export async function createNote(note: {
   title: string;
   content: string;
@@ -38,7 +45,7 @@ export async function createNote(note: {
   return data;
 }
 
-// --- Видалити нотатку за ID ---
+
 export async function deleteNote(id: string): Promise<Note> {
   const { data }: AxiosResponse<Note> = await api.delete(`/notes/${id}`);
   return data;

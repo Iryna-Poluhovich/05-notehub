@@ -4,12 +4,6 @@ export interface Note {
   content: string;
   tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
   createdAt: string;
+  updatedAt?: string; 
 }
 
-export interface PaginatedNotes {
-  notes: Note[];
-  total: number;
-  page: number;
-  perPage: number;
-  totalPages: number;
-}

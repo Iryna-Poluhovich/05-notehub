@@ -11,7 +11,17 @@ export default function Modal({
   onClose,
   children,
 }: PropsWithChildren<ModalProps>) {
+ 
   useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
+   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
@@ -19,6 +29,7 @@ export default function Modal({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
+ 
   function handleBackdropClick(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) {

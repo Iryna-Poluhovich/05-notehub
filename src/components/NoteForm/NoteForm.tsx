@@ -1,13 +1,14 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import type { FormikHelpers } from "formik";
 import * as Yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createNote } from "../../services/noteService";
 import styles from "./NoteForm.module.css";
 import type { Note } from "../../types/note";
 
 type NoteTag = Note["tag"];
 
 interface NoteFormProps {
-  onSubmit: (title: string, content: string, tag: NoteTag) => void | Promise<void>;
   onCancel: () => void;
 }
 
@@ -28,15 +29,31 @@ const validationSchema = Yup.object({
     .required("Tag is required"),
 });
 
-export default function NoteForm({ onSubmit, onCancel }: NoteFormProps) {
+export default function NoteForm({ onCancel }: NoteFormProps) {
   const initialValues: NoteFormValues = { title: "", content: "", tag: "" };
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (note: { title: string; content: string; tag: NoteTag }) =>
+      createNote(note),
+    onSuccess: () => {
+      // після створення ноти інвалідовуємо кеш списку
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      onCancel();
+    },
+  });
 
   async function handleSubmit(
     values: NoteFormValues,
     helpers: FormikHelpers<NoteFormValues>
   ) {
     try {
-      await onSubmit(values.title.trim(), values.content.trim(), values.tag as NoteTag);
+      await mutation.mutateAsync({
+        title: values.title.trim(),
+        content: values.content.trim(),
+        tag: values.tag as NoteTag,
+      });
       helpers.resetForm();
     } finally {
       helpers.setSubmitting(false);
@@ -105,7 +122,7 @@ export default function NoteForm({ onSubmit, onCancel }: NoteFormProps) {
               className={styles.submitButton}
               disabled={!isValid || !dirty || isSubmitting}
             >
-              Create note
+              {mutation.isPending ? "Creating..." : "Create note"}
             </button>
           </div>
         </Form>
